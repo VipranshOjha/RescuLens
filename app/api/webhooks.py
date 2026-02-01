@@ -45,10 +45,10 @@ async def handle_sms(Body: str = Form(...), From: str = Form(...)):
 
 import os
 import requests
-from openai import OpenAI
+# from openai import OpenAI
 from app.core.config import settings
 
-client = OpenAI(api_key=settings.OPENAI_API_KEY)
+# client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
 @router.post("/webhooks/voice")
 async def handle_voice(From: str = Form(...)):
@@ -63,7 +63,9 @@ async def handle_voice(From: str = Form(...)):
     resp.record(
         action="/webhooks/process_recording",
         max_length=60,
-        play_beep=True
+        play_beep=True,
+        transcribe=True,
+        transcribe_callback="/webhooks/transcription"
     )
     
     return Response(content=str(resp), media_type="application/xml")
@@ -71,57 +73,47 @@ async def handle_voice(From: str = Form(...)):
 @router.post("/webhooks/process_recording")
 async def handle_recording(RecordingUrl: str = Form(...), From: str = Form(...)):
     """
-    Download recording -> Whisper -> NLP -> Triage
+    Handle recording completion.
+    Twilio handles transcription asynchronously, so we just acknowledge here.
     """
-    print(f"Processing recording from: {RecordingUrl}")
+    print(f"Recording finished. URL: {RecordingUrl}")
     resp = MessagingResponse()
     
-    # 1. Download the Audio File
-    # Twilio recordings are private by default, so we need to auth
+    # We rely on the transcription callback now.
+    # Just return empty 200 OK.
+    return {"status": "recording_received"}
+
+@router.post("/webhooks/transcription")
+async def handle_transcription(TranscriptionText: str = Form(...), From: str = Form(...)):
+    """
+    Handle incoming Transcription text from Twilio.
+    """
+    print(f"Received transcription for {From}: {TranscriptionText}")
+    
     try:
-        audio_response = requests.get(
-            RecordingUrl, # + ".mp3" sometimes helps if default is wav
-            auth=(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-        )
-        audio_response.raise_for_status()
-        
-        # Save to temp file
-        filename = f"temp_recording_{From.strip('+')}.wav"
-        with open(filename, "wb") as f:
-            f.write(audio_response.content)
-            
-        # 2. Send to Whisper
-        with open(filename, "rb") as audio_file:
-            transcript_response = client.audio.transcriptions.create(
-                model="whisper-1", 
-                file=audio_file,
-                prompt="Panic, emergency, medical context, ambulance, help"
-            )
-        
-        transcript = transcript_response.text
-        print(f"Whisper Transcript: {transcript}")
-        
-        # 3. Process Incident
+        transcript = TranscriptionText.strip()
+        if not transcript:
+            print("Empty transcription received.")
+            return {"status": "empty_transcription"}
+
+        # Process the incident
         extracted = extract_medical_entities(transcript)
         normalized = normalize_entities(extracted["entities"])
         triage_result = triage(normalized["symptoms"])
         
-        create_incident(
+        incident = create_incident(
             input_text=transcript,
             symptoms=normalized["symptoms"],
             triage_result=triage_result
         )
-
-        # Cleanup
-        os.remove(filename)
-
+        print(f"Incident created from transcription: {incident.id}")
+        
     except Exception as e:
-        print(f"Error processing recording: {e}")
-        # In a real app, we'd queue a retry or alert an admin
+        print(f"Error processing transcription: {e}")
         return Response(status_code=500)
-    
-    # We don't usually reply voice-to-voice here immediately because the caller might have hung up.
-    # But if they are still on the line, we could say "Help is on the way".
-    # For now, we just return empty 200 OK to acknowledge receipt.
-    return {"status": "processed"} 
+        
+    return {"status": "transcription_processed"}
+
+# Deprecated/Disabled OpenAI Logic
+# async def handle_recording_old(...): 
 

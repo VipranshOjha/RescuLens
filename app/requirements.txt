@@ -4,3 +4,7 @@ pydantic
 transformers
 torch
 numpy
+pydantic-settings
+twilio
+python-multipart
+requests

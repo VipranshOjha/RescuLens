@@ -10,6 +10,7 @@ export interface Incident {
     symptoms: string[];
     urgency: 'CRITICAL' | 'URGENT' | 'NON-URGENT' | 'ADVICE';
     dispatch_required: boolean;
+    dispatch_confirmed?: boolean;
     status: string;
     lat?: number;
     lon?: number;
@@ -45,6 +46,21 @@ export const api = {
 
     getIncident: async (id: string): Promise<Incident> => {
         const response = await client.get<Incident>(`/incident/${id}`);
+        return response.data;
+    },
+
+    confirmDispatch: async (id: string): Promise<boolean> => {
+        const response = await client.post<boolean>(`/incidents/${id}/dispatch`);
+        return response.data;
+    },
+
+    requestManualReview: async (id: string): Promise<any> => {
+        const response = await client.post(`/incidents/${id}/review`);
+        return response.data;
+    },
+
+    denyDispatch: async (id: string): Promise<any> => {
+        const response = await client.post(`/incidents/${id}/deny`);
         return response.data;
     },
 

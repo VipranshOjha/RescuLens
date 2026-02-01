@@ -35,8 +35,8 @@ export const Dashboard: React.FC = () => {
             <div className="flex justify-between items-end mb-8">
                 <div>
                     <div>
-                        <h2 className="text-3xl font-bold text-white mb-2">Live Incident Dashboard</h2>
-                        <p className="text-slate-400">Real-time emergency triage and dispatch monitoring</p>
+                        <h2 className="text-3xl font-bold text-primary mb-2">Live Incident Dashboard</h2>
+                        <p className="text-secondary">Real-time emergency triage and dispatch monitoring</p>
                     </div>
                     <div className="flex gap-3">
                         <button
@@ -45,16 +45,16 @@ export const Dashboard: React.FC = () => {
                                 await api.simulateIncidents(3);
                                 await fetchIncidents();
                             }}
-                            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-white transition-colors font-medium shadow-lg shadow-indigo-900/20"
+                            className="flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent-hover rounded-lg text-white transition-colors font-medium shadow-lg shadow-accent/20"
                         >
                             <Activity className="w-4 h-4" />
                             Simulate Emergency
                         </button>
                         <button
                             onClick={() => fetchIncidents()}
-                            className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-300 transition-colors border border-slate-700"
+                            className="flex items-center gap-2 px-4 py-2 bg-panel hover:bg-item-hover rounded-lg text-secondary transition-colors border border-panel"
                         >
-                            <RefreshCw className={`w - 4 h - 4 ${loading ? 'animate-spin' : ''} `} />
+                            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                             Refresh
                         </button>
                     </div>
@@ -67,12 +67,12 @@ export const Dashboard: React.FC = () => {
                 ))}
 
                 {incidents.length === 0 && !loading && (
-                    <div className="col-span-full py-20 text-center border-2 border-dashed border-slate-800 rounded-2xl bg-slate-900/50">
-                        <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Activity className="w-8 h-8 text-slate-500" />
+                    <div className="col-span-full py-20 text-center border-2 border-dashed border-panel rounded-2xl bg-panel/50">
+                        <div className="w-16 h-16 bg-panel rounded-full flex items-center justify-center mx-auto mb-4 border border-panel">
+                            <Activity className="w-8 h-8 text-muted" />
                         </div>
-                        <h3 className="text-xl font-medium text-slate-300">No Active Incidents</h3>
-                        <p className="text-slate-500 max-w-sm mx-auto mt-2">
+                        <h3 className="text-xl font-medium text-primary">No Active Incidents</h3>
+                        <p className="text-muted max-w-sm mx-auto mt-2">
                             New emergency calls affecting the monitored area will appear here automatically.
                         </p>
                     </div>
@@ -81,7 +81,7 @@ export const Dashboard: React.FC = () => {
 
 
             <div className="mt-8">
-                <h3 className="text-xl font-bold text-white mb-4">Geospatial Awareness</h3>
+                <h3 className="text-xl font-bold text-primary mb-4">Geospatial Awareness</h3>
                 <LiveMap incidents={incidents} />
             </div>
         </Layout >

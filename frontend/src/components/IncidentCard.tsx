@@ -23,7 +23,7 @@ export const IncidentCard: React.FC<IncidentCardProps> = ({ incident, onClick })
                 'cursor-pointer relative overflow-hidden rounded-2xl border p-5 transition-colors',
                 isCritical
                     ? 'bg-red-950/10 border-red-500/20 hover:border-red-500/40'
-                    : 'bg-slate-900 border-slate-800 hover:border-slate-700'
+                    : 'bg-panel border-panel hover:border-panel/80'
             )}
         >
             {/* Background Gradient for Critical */}
@@ -41,7 +41,7 @@ export const IncidentCard: React.FC<IncidentCardProps> = ({ incident, onClick })
                     )}>
                         {incident.urgency}
                     </span>
-                    <span className="text-slate-500 text-xs flex items-center gap-1">
+                    <span className="text-muted text-xs flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         {new Date(incident.created_at).toLocaleTimeString()}
                     </span>
@@ -57,24 +57,24 @@ export const IncidentCard: React.FC<IncidentCardProps> = ({ incident, onClick })
                 )}
             </div>
 
-            <h3 className="text-lg font-semibold text-slate-100 mb-2 line-clamp-2 relative z-10">
+            <h3 className="text-lg font-semibold text-primary mb-2 line-clamp-2 relative z-10">
                 {incident.input_text}
             </h3>
 
             <div className="flex flex-wrap gap-2 mb-4 relative z-10">
                 {incident.symptoms.slice(0, 3).map((symptom, idx) => (
-                    <span key={idx} className="px-2 py-1 bg-slate-800 rounded text-xs text-slate-400">
+                    <span key={idx} className="px-2 py-1 bg-item-hover rounded text-xs text-secondary">
                         {symptom}
                     </span>
                 ))}
                 {incident.symptoms.length > 3 && (
-                    <span className="px-2 py-1 bg-slate-800 rounded text-xs text-slate-400">
+                    <span className="px-2 py-1 bg-item-hover rounded text-xs text-secondary">
                         +{incident.symptoms.length - 3}
                     </span>
                 )}
             </div>
 
-            <div className="flex items-center gap-2 text-slate-500 text-sm relative z-10 border-t border-slate-800/50 pt-3 mt-auto">
+            <div className="flex items-center gap-2 text-muted text-sm relative z-10 border-t border-panel/50 pt-3 mt-auto">
                 <MapPin className="w-4 h-4" />
                 <span>Location Detected (Simulated)</span>
             </div>

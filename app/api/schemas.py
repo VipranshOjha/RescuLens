@@ -23,6 +23,8 @@ class IncidentResponse(BaseModel):
     symptoms: List[str]
     urgency: str
     dispatch_required: bool
+    dispatch_confirmed: bool = False
+    dispatch_decision: Optional[Dict[str, Any]] = None
     status: str
     lat: Optional[float] = None
     lon: Optional[float] = None

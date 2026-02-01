@@ -5,7 +5,7 @@ from app.api.schemas import AnalyzeRequest, AnalyzeResponse, IncidentResponse
 from app.medical_nlp.extractor import extract_medical_entities
 from app.medical_nlp.normalizer import normalize_entities
 from app.triage.triage_engine import triage
-from app.incident.service import create_incident
+from app.incident.service import create_incident, confirm_dispatch, request_manual_review, deny_dispatch
 from app.incident.repository import incident_repository
 
 router = APIRouter()
@@ -59,3 +59,38 @@ def get_incident(incident_id: str):
         "reasoning": incident.reasoning,
         "audit_log": incident.audit_log
     }
+
+@router.post("/incidents/{incident_id}/dispatch")
+def dispatch_incident(incident_id: str):
+    try:
+        # For this demo, we can just assume a standard dispatch decision 
+        # or grab the last recommendation from the log.
+        # But to keep it simple, we'll confirm with a generic decision.
+        
+        # In a real flow, the frontend sends the confirmed hospital/unit.
+        decision = {
+            "status": "CONFIRMED",
+            "timestamp": "now"
+        }
+        
+        incident = confirm_dispatch(incident_id, decision)
+        return incident.dispatch_confirmed
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=404, detail=str(e))
+
+@router.post("/incidents/{incident_id}/review")
+def review_incident(incident_id: str):
+    try:
+        incident = request_manual_review(incident_id)
+        return {"status": incident.status}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+@router.post("/incidents/{incident_id}/deny")
+def deny_incident_dispatch(incident_id: str):
+    try:
+        incident = deny_dispatch(incident_id)
+        return {"status": incident.status}
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
