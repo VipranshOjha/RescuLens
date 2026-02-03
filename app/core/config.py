@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
-    PROJECT_NAME: str = "RescuLens"
+    PROJECT_NAME: str = "T.A.L.O.N."
     
     # Twilio Configuration
     TWILIO_ACCOUNT_SID: str = os.getenv("TWILIO_ACCOUNT_SID", "AC_MOCK_SID")

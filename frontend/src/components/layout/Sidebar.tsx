@@ -21,7 +21,7 @@ export const Sidebar: React.FC = () => {
                     <Activity className="text-white w-5 h-5" />
                 </div>
                 <h1 className="text-xl font-bold text-primary">
-                    RescuLens
+                    T.A.L.O.N.
                 </h1>
             </div>
 

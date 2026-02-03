@@ -5,7 +5,7 @@ from app.api.routes import router as api_router
 from app.api.webhooks import router as webhook_router
 from app.simulation import run_simulation
 
-app = FastAPI(title="RescuLens")
+app = FastAPI(title="T.A.L.O.N.")
 
 app.add_middleware(
     CORSMiddleware,

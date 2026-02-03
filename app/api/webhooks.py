@@ -56,7 +56,7 @@ async def handle_voice(From: str = Form(...)):
     Handle incoming Voice call. Records the call and sends for local transcription.
     """
     resp = VoiceResponse()
-    resp.say("This is RescuLens 911. Please state your emergency after the beep. We are listening.")
+    resp.say("This is T.A.L.O.N. 911. Please state your emergency after the beep. We are listening.")
     
     # Record the user's response
     # action: Twilio will POST to this URL when recording ends (silence or hangup)
